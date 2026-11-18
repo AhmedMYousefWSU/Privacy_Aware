@@ -1,0 +1,41 @@
+# Plumbing test on the fake dataset from scripts/make_toy_vispr.py. Numbers are meaningless.
+paths:
+  vispr_root: data/toy_vispr
+  work_dir: outputs/toy
+
+model:
+  llava: llava-hf/llava-1.5-7b-hf
+  clip: openai/clip-vit-large-patch14-336
+  clip_revision: refs/pr/20             # official safetensors conversion (main has only .bin)
+  device: cuda
+
+labels:
+  supersample: 4
+  delta: 0.25
+
+relevance:
+  attn_layers: [2, 15]
+  attn_query: text
+  norm: rank
+  clip_mode: maskclip
+  loo_block: 4
+
+privacy_head:
+  hidden: 256
+  dropout: 0.1
+  epochs: 3
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  batch_images: 8
+
+eval:
+  split: test
+  max_images: 3
+  seed: 0
+  keep_ratios: [0.5, 0.25]
+  lambdas: [0.5, 2.0]
+  taus: [0.5]
+  r_sources: [attention, clip, loo]
+  p_sources: [gt, learned]
+  max_new_tokens: 8
+  n_negative_probes: 1

@@ -1,0 +1,8 @@
+\newcommand{\EsixText}{%
+\textbf{Result.} Growing the masks by one token closes most of the gap: at $K{=}144$, the dilated oracle's adversarial leakage (\EsixLc) is statistically indistinguishable from the learned score's
+(difference $-0.03$, 95\% CI $[-0.06,+0.01]$), and at $K{=}288$ it falls from 0.49 to \EsixLa, though it remains above the learned score (difference $+0.08$, CI $[+0.05,+0.12]$).
+So a large part of the leakage really comes from tokens \emph{adjacent} to the annotated regions, which confirms the context explanation.
+Growing by two tokens is \emph{worse} than by one (\EsixLb\ at $K{=}288$). The reason is the budget. Two-token dilation flags 300 of 576 tokens per image on average,
+and in 56\% of images more than $K{=}288$, so selection must keep some flagged tokens. Dilation gives the ring the same score as the core, so the selector cannot prefer ring tokens over core tokens.
+The learned score is \emph{graded} (mean 0.89 inside a mask, 0.47 in the first ring, 0.34 in the second), so under a tight budget it gives up the least risky tokens first.
+\emph{Lesson for the second half:} privacy risk should be a graded, context-aware score, not a binary region. This favours the learned head and motivates distance-weighted oracles such as $\Pr_i=\max_j \Pr^{GT}_j\,\gamma^{d(i,j)}$ as a stronger reference.}

@@ -1,0 +1,34 @@
+# E1 — oracle privacy: does S = R − λ·P^GT beat relevance-only pruning at all?
+# No privacy head needed (skip steps 02/03). Same data/labels as default.yaml.
+paths:
+  vispr_root: data/vispr_redactions
+  work_dir: outputs/e1_oracle
+
+model:
+  llava: llava-hf/llava-1.5-7b-hf
+  clip: openai/clip-vit-large-patch14-336
+  clip_revision: refs/pr/20
+  device: cuda
+
+labels:
+  supersample: 4
+  delta: 0.25
+
+relevance:
+  attn_layers: [2, 15]
+  attn_query: text
+  norm: rank
+  clip_mode: maskclip
+  loo_block: 2
+
+eval:
+  split: test
+  max_images: 200
+  seed: 0
+  keep_ratios: [0.75, 0.5, 0.25, 0.1]
+  lambdas: [0.1, 0.25, 0.5, 1.0, 2.0]
+  taus: [0.5, 0.8]
+  r_sources: [attention, clip]
+  p_sources: [gt]
+  max_new_tokens: 10
+  n_negative_probes: 2

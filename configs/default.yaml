@@ -1,0 +1,41 @@
+# All relative paths are resolved against the project root.
+paths:
+  vispr_root: data/vispr_redactions     # images/{train,val,test}2017 + annotations/{train,val,test}2017.json
+  work_dir: outputs
+
+model:
+  llava: llava-hf/llava-1.5-7b-hf
+  clip: openai/clip-vit-large-patch14-336   # same vision tower as LLaVA-1.5; used for R2 (CLIP relevance)
+  clip_revision: refs/pr/20             # official safetensors conversion (main has only .bin)
+  device: cuda
+
+labels:
+  supersample: 4          # rasterise polygons at 4x336 before pooling to the 24x24 grid
+  delta: 0.25             # token counts as "private" when overlap > delta (hit-rate metric / binary AP)
+
+relevance:
+  attn_layers: [2, 15]    # inclusive range of LLM layers averaged for attention relevance
+  attn_query: text        # text | last
+  norm: rank              # rank | minmax  (see privprune/selection.py:normalize)
+  clip_mode: maskclip     # maskclip | raw
+  loo_block: 2            # oracle leave-block-out relevance; 2 -> 144 forward passes per question
+
+privacy_head:
+  hidden: 256
+  dropout: 0.1
+  epochs: 15
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  batch_images: 32        # 32 images x 576 tokens per step
+
+eval:
+  split: test
+  max_images: 200
+  seed: 0
+  keep_ratios: [0.75, 0.5, 0.25, 0.1]   # full (1.0) is always run as the reference
+  lambdas: [0.1, 0.25, 0.5, 1.0, 2.0]   # λ = 0 is the "relevance" baseline
+  taus: [0.5, 0.8]                      # hard privacy gate thresholds
+  r_sources: [attention, clip]          # add "loo" for the oracle relevance (slow)
+  p_sources: [gt, learned]
+  max_new_tokens: 10
+  n_negative_probes: 2                  # absent-attribute probes per image (false-positive check)

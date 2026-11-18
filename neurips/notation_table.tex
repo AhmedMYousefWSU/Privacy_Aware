@@ -1,0 +1,33 @@
+\begin{table}[t]
+\centering\small
+\caption{Notation and parameter values.}
+\label{tab:notation}
+\begin{tabular}{@{}lp{0.52\linewidth}l@{}}
+\toprule
+Symbol & Meaning & Value \\
+\midrule
+$N$ & number of visual tokens per image & 576 ($24{\times}24$) \\
+$K$ & token budget & $\{432, 288, 144, 58\}$ (75--10\%) \\
+$\mathcal{K}$, $x_i$ & set of kept tokens; indicator that token $i$ is kept & $|\mathcal{K}|=K$; $x_i\in\{0,1\}$ \\
+$z_i$ & CLIP patch feature of token $i$ (second-to-last layer) & $\mathbb{R}^{1024}$ \\
+$v_i$ & projected language-model embedding of token $i$ & $\mathbb{R}^{4096}$ \\
+$A_i$ & image region covered by token $i$ & $14{\times}14$ pixels \\
+$Q$, $H$ & question-token positions; attention heads & question length; 32 heads \\
+$\mathcal{L}$ & layers used for attention relevance & $\{2,\dots,15\}$ of 32 \\
+$\tilde R_i$, $R_i$ & raw and rank-normalised task relevance & $\tilde R_i\ge 0$; $R_i\in[0,1]$ \\
+$C$ & number of privacy attributes & 28 \\
+$M_c$ & pixel mask of attribute $c$, rasterised at $4\times$ resolution & binary, $1344{\times}1344$ \\
+$o_{i,c}$ & fraction of $A_i$ covered by attribute $c$ (target) & $[0,1]$ \\
+$P^{GT}_i$ & ground-truth (oracle) privacy risk & $[0,1]$ \\
+$\delta$ & overlap above which a token counts as private & 0.25 \\
+$p_{i,c}$, $P_i$ & predicted attribute probability; risk $\max_c p_{i,c}$ & $[0,1]$ \\
+$f_P$ & privacy predictor (LN, $1024{\to}256{\to}C$ MLP) & 0.27M parameters \\
+$w^+_c$ & positive-class weight of attribute $c$, $\mathrm{neg}_c/\mathrm{pos}_c$ & capped at 100 \\
+-- & predictor training: AdamW, one-cycle schedule & lr $10^{-3}$, wd $10^{-4}$, 15 epochs \\
+$\lambda$ & privacy weight (soft selection) & $\{0.1, 0.25, 0.5, 1, 2\}$ \\
+$\tau$ & risk threshold (hard selection) & $\{0.5, 0.8\}$ \\
+$S_i$ & selection score $R_i-\lambda P_i$ & $[-\lambda, 1]$ \\
+-- & answer generation: greedy decoding & at most 10 new tokens \\
+\bottomrule
+\end{tabular}
+\end{table}

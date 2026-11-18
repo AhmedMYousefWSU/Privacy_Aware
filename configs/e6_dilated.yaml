@@ -1,0 +1,31 @@
+# E6: is learned P better than the oracle because it also covers context tokens around the masks?
+# Reuses labels/tasks/head from outputs/ (same work_dir); write to a separate results file:
+#   python scripts/05_evaluate.py --config configs/e6_dilated.yaml --out outputs/results_dilated.jsonl --types utility probe_adv probe_benign probe_neg
+paths:
+  vispr_root: data/vispr_redactions
+  work_dir: outputs
+model:
+  llava: llava-hf/llava-1.5-7b-hf
+  clip: openai/clip-vit-large-patch14-336
+  clip_revision: refs/pr/20
+  device: cuda
+labels:
+  supersample: 4
+  delta: 0.25
+relevance:
+  attn_layers: [2, 15]
+  attn_query: text
+  norm: rank
+  clip_mode: maskclip
+  loo_block: 2
+eval:
+  split: test
+  max_images: 200
+  seed: 0
+  keep_ratios: [0.5, 0.25]
+  lambdas: [1.0, 2.0]
+  taus: [0.5]
+  r_sources: [attention]
+  p_sources: [gt_dil1, gt_dil2]
+  max_new_tokens: 10
+  n_negative_probes: 2

@@ -1,0 +1,9 @@
+torch>=2.1
+transformers>=4.55,<5
+accelerate
+numpy
+pillow
+pyyaml
+pandas
+matplotlib
+tqdm
